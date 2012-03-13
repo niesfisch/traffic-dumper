@@ -3,16 +3,39 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.marcelsauer</groupId>
-    <artifactId>PostgresProtocolDebugger</artifactId>
+    <artifactId>postgres-protocol-debugger</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <name>PostgresProtocolDebugger</name>
-    <url>http://maven.apache.org</url>
+    <url>http://github.com/niesfisch/Postgres-Protocol-Debugger</url>
+    <name>postgres-protocol-debugger</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dist.directoy>${build.directory}/dist/${project.artifactId}-${project.version}</dist.directoy>
+        <assembly.directory>src/main/assembly</assembly.directory>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <developers>
+        <developer>
+            <name>Marcel Sauer</name>
+            <email>marcel (dot) sauer (at) gmx (dot) de</email>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:niesfisch/Postgres-Protocol-Debugger.git</connection>
+        <url>scm:git:git@github.com:niesfisch/Postgres-Protocol-Debugger.git</url>
+        <developerConnection>scm:git:git@github.com:niesfisch/Postgres-Protocol-Debugger.git</developerConnection>
+    </scm>
 
     <build>
         <plugins>
@@ -24,6 +47,84 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeGroupIds>
+                                org.easymock,junit,
+                            </excludeGroupIds>
+                            <outputDirectory>${dist.directoy}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${dist.directoy}">
+                                    <fileset dir="${assembly.directory}/resources">
+                                        <include name="*.bat"/>
+                                        <include name="*.sh"/>
+                                        <include name="*.txt"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${dist.directoy}/lib">
+                                    <fileset dir="${build.directory}">
+                                        <include name="*.jar"/>
+                                    </fileset>
+                                </copy>
+                                <zip destfile="${dist.directoy}/../${build.finalName}.zip" basedir="${dist.directoy}"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <header>${basedir}/license.txt</header>
+                    <aggregate>true</aggregate>
+                    <failIfMissing>true</failIfMissing>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.bat</exclude>
+                        <exclude>**/*.sh</exclude>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.txt</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
