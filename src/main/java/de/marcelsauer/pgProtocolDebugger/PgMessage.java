@@ -22,45 +22,47 @@ import java.io.OutputStream;
 /**
  * @author msauer
  */
-public class PgMessage {
+class PgMessage {
 
     private final int type;
     private final byte[] payload;
+    private PgMessageParserV3.Sender sender;
 
-    public PgMessage(int type, byte[] payload) {
+    public PgMessage(int type, byte[] payload, PgMessageParserV3.Sender sender) {
         this.type = type;
         this.payload = payload;
+        this.sender = sender;
     }
 
     @Override
     public String toString() {
-
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < this.payload.length; ++i) {
             char c = (char) this.payload[i];
             String label = encode(c);
             buf.append(label);
         }
-
-        return String.format("[%s][%s]", encode(this.type), buf);
+        return String.format("[%s][%s][%s][%s bytes]", this.sender.getShortname(), encode(this.type), buf, this.payload.length);
     }
 
     public void writeTo(OutputStream out) throws IOException {
         DataOutputStream dataOut = new DataOutputStream(out);
         if (this.type != -1) {
             dataOut.writeByte(this.type);
-            dataOut.writeInt(this.payload.length + 4);
-            dataOut.write(this.payload);
         }
+        dataOut.writeInt(this.payload.length + 4);
+        dataOut.write(this.payload);
     }
 
     private String encode(int c) {
-        if (c == -1)
+        if (c == -1) {
             return "<-1>";
-        if (Character.isLetterOrDigit((char) c))
+        }
+        if (Character.isDefined((char) c)) {
             return String.valueOf((char) c);
-        else
+        } else {
             return "<" + Integer.toHexString(c) + ">";
+        }
     }
 
 }

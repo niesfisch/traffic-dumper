@@ -21,6 +21,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -35,12 +36,17 @@ public class PgMessageParserV3Test {
         PgMessageParserV3 parser = new PgMessageParserV3(in, Sender.BACKEND);
 
         // when
+        int count = 0;
         PgMessage nextMessage;
         while ((nextMessage = parser.nextMessage()) != null) {
 
+            count++;
+            
             // then
             assertNotNull(nextMessage);
         }
+        
+        assertEquals(14, count);
 
     }
 }

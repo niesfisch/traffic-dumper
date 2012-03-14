@@ -21,13 +21,25 @@ import java.io.InputStream;
 /**
  * version 3.0 see http://www.postgresql.org/docs/devel/static/protocol.html
  *
+ * holds the internal parsing state, not thread safe
+ *
  * @author msauer
  */
-public class PgMessageParserV3 {
+class PgMessageParserV3 {
 
     public enum Sender {
-        FRONTEND,
-        BACKEND;
+        FRONTEND("F"),
+        BACKEND("B");
+
+        private final String shortname;
+
+        private Sender(String shortname) {
+            this.shortname = shortname;
+        }
+
+        public String getShortname() {
+            return shortname;
+        }
     }
 
     private final InputStream in;
@@ -39,31 +51,34 @@ public class PgMessageParserV3 {
     int length = -1;
     byte[] payload;
 
-    public PgMessageParserV3(InputStream in, Sender sender) {
+    PgMessageParserV3(InputStream in, Sender sender) {
         this.in = in;
         this.sender = sender;
     }
 
-    public PgMessage nextMessage() throws IOException {
-        reset();
+    PgMessage nextMessage() throws IOException {
+        resetState();
 
-        if (this.sender == Sender.FRONTEND && this.isFirstMessage) {
+        if (isClientInit()) {
             this.isFirstMessage = false;
             this.type = -1;
-            length();
-            payload();
+            readLength();
+            readPayload();
         } else {
             if (type() == -1) {
                 return null;
             }
-            length();
-            payload();
+            readLength();
+            readPayload();
         }
-        return new PgMessage(this.type, this.payload);
-
+        return new PgMessage(this.type, this.payload, this.sender);
     }
 
-    private void reset() {
+    private boolean isClientInit() {
+        return this.sender == Sender.FRONTEND && this.isFirstMessage;
+    }
+
+    private void resetState() {
         this.type = 0;
         this.length = -1;
         this.payload = new byte[0];
@@ -75,13 +90,13 @@ public class PgMessageParserV3 {
         return next;
     }
 
-    private void payload() throws IOException {
+    private void readPayload() throws IOException {
         this.payload = new byte[this.length];
         int count = 0;
         while ((count = this.in.read(this.payload, count, this.length - count)) < this.length) ;
     }
 
-    private void length() throws IOException {
+    private void readLength() throws IOException {
         this.length = readInt4() - 4;
     }
 

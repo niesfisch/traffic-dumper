@@ -30,11 +30,13 @@ class ProxyThread extends Thread {
 
     private final Socket incoming, outgoing;
     private final Sender sender;
+    private final PgMessageCallback pgMessageCallback;
 
-    ProxyThread(String name, Socket in, Socket out, Sender sender) {
+    ProxyThread(String name, Socket in, Socket out, Sender sender, PgMessageCallback pgMessageCallback) {
         this.incoming = in;
         this.outgoing = out;
         this.sender = sender;
+        this.pgMessageCallback = pgMessageCallback;
         this.setName(name);
     }
 
@@ -49,7 +51,7 @@ class ProxyThread extends Thread {
             PgMessageParserV3 parser = new PgMessageParserV3(in, this.sender);
             PgMessage nextMessage;
             while ((nextMessage = parser.nextMessage()) != null) {
-                System.out.println(nextMessage);
+                this.pgMessageCallback.receivedMessage(nextMessage);
                 nextMessage.writeTo(out);
                 out.flush();
             }
