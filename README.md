@@ -73,8 +73,8 @@ start any application that is using postgres and and change it to connect to loc
 
 e.g.
 
-   old: jdbc:postgresql://omega:5432/your_databsae
-   new: jdbc:postgresql://localhost:7777/your_databsae
+    old: jdbc:postgresql://omega:5432/your_databsae
+    new: jdbc:postgresql://localhost:7777/your_databsae
 
 issue some SQL statements and watch the output generated
 
