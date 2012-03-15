@@ -4,7 +4,7 @@
 
     <groupId>de.marcelsauer</groupId>
     <artifactId>postgres-protocol-debugger</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <url>http://github.com/niesfisch/Postgres-Protocol-Debugger</url>
     <name>postgres-protocol-debugger</name>
@@ -59,9 +59,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <excludeGroupIds>
-                                org.easymock,junit,
-                            </excludeGroupIds>
+                            <excludeGroupIds>junit,org.mockito</excludeGroupIds>
                             <outputDirectory>${dist.directoy}/lib</outputDirectory>
                         </configuration>
                     </execution>
@@ -87,6 +85,7 @@
                                         <include name="*.jar"/>
                                     </fileset>
                                 </copy>
+                                <chmod file="${dist.directoy}/pg-debugger.sh" perm="ugo+x"/>
                                 <zip destfile="${dist.directoy}/../${build.finalName}.zip" basedir="${dist.directoy}"/>
                             </target>
                         </configuration>
@@ -134,13 +133,14 @@
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.8.0</version>
             <type>jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>

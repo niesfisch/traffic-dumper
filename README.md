@@ -1,8 +1,8 @@
 # What's that for? 
 
-*Postgres Protocol Debugger* is a small command line utility that dumps all messages sent from a client to the Postgres database.
+**Postgres Protocol Debugger** is a small command line utility that dumps all messages sent from a client to a postgres database.
 
-a client is everything connecting to Postgres, e.g. a gui tool, a Java program using JDBC etc....
+a client is everything connecting to postgres, e.g. a gui tool, a java program using JDBC etc....
 
 it will show you all the messages that are exchanged which makes debugging and analysing problems easier.
 
@@ -10,11 +10,11 @@ it will show you all the messages that are exchanged which makes debugging and a
 
 start:
 
-    $pg-debugger> pg-debugger.sh --server the_target_server --serverport 5432 --localport 6666
-    $pg-debugger> psql --host localhost --port 6666 --user the_username my_database (in another window)
+    $> pg-debugger.sh --server the_target_server --serverport 5432 --localport 6666
+    $> psql --host localhost --port 6666 --user the_username my_database (in another window)
 
 
-sample select:
+sample select executed against postgres via psql console:
 
     psql (9.0.1)
     Type "help" for help.
@@ -50,22 +50,26 @@ output:
 
 # Getting Postgres Protocol Debugger
 
+just download the latest zip file
+
+or built from scratch
+
     $> git clone https://github.com/niesfisch/Postgres-Protocol-Debugger.git
     $> cd Postgres-Protocol-Debugger.git
     $> mvn clean package
 
 # How To
 
-1. start the Postgres DB Server, remember which port is is now running on, e.g. 5432
-2. start pg-debugger.sh with the local port and target port (that you will connect to)
+1. start the postgres db server, remember which port is is now running on, e.g. 5432
+2. start pg-debugger.sh
 
 e.g.
 
-    pg-debugger.sh --server homer --port 5432 --localport 7777
+    pg-debugger.sh --server homer --serverport 5432 --localport 7777
 
 this will start a connection to host homer on port 5432 which is connected to your local port 7777
 
-3. start any application that is using Postgres DB and and change it to connect to localhost:5555
+3. start any application that is using postgres and and change it to connect to localhost:7777
 
 e.g.
 
