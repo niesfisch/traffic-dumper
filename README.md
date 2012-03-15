@@ -10,8 +10,8 @@ it will show you all the messages that are exchanged which makes debugging and a
 
 start:
 
-    $> pg-debugger.sh --server the_target_server --serverport 5432 --localport 6666
-    $> psql --host localhost --port 6666 --user the_username my_database (in another window)
+    $> pg-debugger.sh --server the_target_server --serverport 5432 --localport 7777
+    $> psql --host localhost --port 7777 --user the_username my_database (in another window)
 
 
 sample select executed against postgres via psql console:
@@ -23,7 +23,7 @@ sample select executed against postgres via psql console:
 
 output:
 
-    waiting for incoming connections on port '6666' which will be forward to 'the_target_server:5432' ...
+    waiting for incoming connections on port '7777' which will be forward to 'the_target_server:5432' ...
     established connection. starting to capture and forward messages ...
 
     [<-1>][<0><3><0><0>user<0>the_username<0>database<0>my_database<0>application<5f>name<0>psql<0><0>]
@@ -73,7 +73,7 @@ start any application that is using postgres and and change it to connect to loc
 
 e.g.
 
-    old: jdbc:postgresql://omega:5432/your_databsae
+    old: jdbc:postgresql://homer:5432/your_databsae
     new: jdbc:postgresql://localhost:7777/your_databsae
 
 issue some SQL statements and watch the output generated
