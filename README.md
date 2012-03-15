@@ -60,8 +60,8 @@ or built from scratch
 
 # How To
 
-1. start the postgres db server, remember which port is is now running on, e.g. 5432
-2. start pg-debugger.sh
+start the postgres db server, remember which port is is now running on, e.g. 5432
+start pg-debugger.sh
 
 e.g.
 
@@ -69,14 +69,14 @@ e.g.
 
 this will start a connection to host homer on port 5432 which is connected to your local port 7777
 
-3. start any application that is using postgres and and change it to connect to localhost:7777
+start any application that is using postgres and and change it to connect to localhost:7777
 
 e.g.
 
    old: jdbc:postgresql://omega:5432/your_databsae
    new: jdbc:postgresql://localhost:7777/your_databsae
 
-4. issue some SQL statements and watch the output generated
+issue some SQL statements and watch the output generated
 
 pg-debugger.sh <local port> <target port>
 
