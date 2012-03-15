@@ -78,8 +78,6 @@ e.g.
 
 issue some SQL statements and watch the output generated
 
-pg-debugger.sh <local port> <target port>
-
 # Licence
 
 Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
