@@ -15,10 +15,6 @@
  */
 package de.marcelsauer.pgProtocolDebugger;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 /**
  * @author msauer
  */
@@ -26,9 +22,9 @@ class PgMessage {
 
     private final int type;
     private final byte[] payload;
-    private PgMessageParserV3.Sender sender;
+    private Sender sender;
 
-    public PgMessage(int type, byte[] payload, PgMessageParserV3.Sender sender) {
+    public PgMessage(int type, byte[] payload, Sender sender) {
         this.type = type;
         this.payload = payload;
         this.sender = sender;
@@ -37,27 +33,23 @@ class PgMessage {
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < this.payload.length; ++i) {
-            char c = (char) this.payload[i];
+        for (byte aPayload : this.payload) {
+            char c = (char) aPayload;
             String label = encode(c);
             buf.append(label);
         }
-        return String.format("[%s][%s][%s][%s bytes]", this.sender.getShortname(), encode(this.type), buf, this.payload.length);
-    }
-
-    public void writeTo(OutputStream out) throws IOException {
-        DataOutputStream dataOut = new DataOutputStream(out);
-        if (this.type != -1) {
-            dataOut.writeByte(this.type);
-        }
-        dataOut.writeInt(this.payload.length + 4);
-        dataOut.write(this.payload);
+        return String.format("[%s][%s][%s][%s bytes]", this.sender.getShortname(), encode(this.type), buf, this.payload.length - Constants.DEFAULT_LENGTH);
     }
 
     private String encode(int c) {
         if (c == -1) {
             return "<-1>";
         }
+
+        if (c == 0) {
+            return "<0>";
+        }
+
         if (Character.isDefined((char) c)) {
             return String.valueOf((char) c);
         } else {

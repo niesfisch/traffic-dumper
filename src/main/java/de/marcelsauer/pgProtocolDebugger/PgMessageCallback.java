@@ -16,7 +16,7 @@
 package de.marcelsauer.pgProtocolDebugger;
 
 /**
- * @author: msauer
+ * @author msauer
  */
 public interface PgMessageCallback {
 

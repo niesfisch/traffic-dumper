@@ -15,8 +15,6 @@
  */
 package de.marcelsauer.pgProtocolDebugger;
 
-import de.marcelsauer.pgProtocolDebugger.PgMessageParserV3.Sender;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,12 +46,16 @@ class ProxyThread extends Thread {
             out = this.outgoing.getOutputStream();
             in = this.incoming.getInputStream();
 
-            PgMessageParserV3 parser = new PgMessageParserV3(in, this.sender);
-            PgMessage nextMessage;
-            while ((nextMessage = parser.nextMessage()) != null) {
-                this.pgMessageCallback.receivedMessage(nextMessage);
-                nextMessage.writeTo(out);
-                out.flush();
+            byte data[] = new byte[1024];
+            int count;
+            while ((count = in.read(data, 0, 1024)) > 0) {
+                // dump
+                byte copy[] = new byte[count];
+                System.arraycopy(data, 0, copy, 0, count);
+                new Thread(new DumperThread(copy, this.sender, this.pgMessageCallback)).start();
+
+                // write
+                out.write(data, 0, count);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

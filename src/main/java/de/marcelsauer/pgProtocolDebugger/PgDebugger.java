@@ -15,7 +15,6 @@
  */
 package de.marcelsauer.pgProtocolDebugger;
 
-import de.marcelsauer.pgProtocolDebugger.PgMessageParserV3.Sender;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
