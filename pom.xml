@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.marcelsauer</groupId>
-    <artifactId>postgres-protocol-debugger</artifactId>
+    <artifactId>traffic-dumper</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <url>http://github.com/niesfisch/Postgres-Protocol-Debugger</url>
-    <name>postgres-protocol-debugger</name>
+    <url>http://github.com/niesfisch/traffic-dumper</url>
+    <name>traffic-dumper</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,9 +32,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:niesfisch/Postgres-Protocol-Debugger.git</connection>
-        <url>scm:git:git@github.com:niesfisch/Postgres-Protocol-Debugger.git</url>
-        <developerConnection>scm:git:git@github.com:niesfisch/Postgres-Protocol-Debugger.git</developerConnection>
+        <connection>scm:git:git@github.com:niesfisch/traffic-dumper.git</connection>
+        <url>scm:git:git@github.com:niesfisch/traffic-dumper.git</url>
+        <developerConnection>scm:git:git@github.com:niesfisch/traffic-dumper.git</developerConnection>
     </scm>
 
     <build>
@@ -85,7 +85,7 @@
                                         <include name="*.jar"/>
                                     </fileset>
                                 </copy>
-                                <chmod file="${dist.directoy}/pg-debugger.sh" perm="ugo+x"/>
+                                <chmod file="${dist.directoy}/traffic-dumper.sh" perm="ugo+x"/>
                                 <zip destfile="${dist.directoy}/../${build.finalName}.zip" basedir="${dist.directoy}"/>
                             </target>
                         </configuration>

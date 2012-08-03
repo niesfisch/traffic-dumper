@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.marcelsauer.pgProtocolDebugger;
+package de.marcelsauer.traffic_dumper;
 
 /**
  * @author msauer
  */
-public interface PgMessageCallback {
-
-    void receivedMessage(PgMessage message);
+public enum Sender {
+    CLIENT,
+    SERVER
 }

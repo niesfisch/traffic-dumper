@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.marcelsauer.pgProtocolDebugger;
+package de.marcelsauer.traffic_dumper;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -28,13 +28,11 @@ class ProxyThread extends Thread {
 
     private final Socket incoming, outgoing;
     private final Sender sender;
-    private final PgMessageCallback pgMessageCallback;
 
-    ProxyThread(String name, Socket in, Socket out, Sender sender, PgMessageCallback pgMessageCallback) {
+    ProxyThread(String name, Socket in, Socket out, Sender sender) {
         this.incoming = in;
         this.outgoing = out;
         this.sender = sender;
-        this.pgMessageCallback = pgMessageCallback;
         this.setName(name);
     }
 
@@ -49,13 +47,16 @@ class ProxyThread extends Thread {
             byte data[] = new byte[1024];
             int count;
             while ((count = in.read(data, 0, 1024)) > 0) {
-                // dump
+                // copy
                 byte copy[] = new byte[count];
                 System.arraycopy(data, 0, copy, 0, count);
-                new Thread(new DumperThread(copy, this.sender, this.pgMessageCallback)).start();
+
+                // dump ...
+                new Thread(new DumperThread(copy, this.sender)).start();
 
                 // write
                 out.write(data, 0, count);
+                out.flush();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

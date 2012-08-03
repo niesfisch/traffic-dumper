@@ -21,7 +21,7 @@ fi
 
 BASE_DIR=$(dirname $0)
 LIBS="$BASE_DIR/lib/*"
-CLASS=de.marcelsauer.pgProtocolDebugger.PgDebugger
+CLASS=de.marcelsauer.traffic_dumper.TrafficDumper
 JAVA_EXE="$JAVA_HOME/bin/java"
 
 echo "using JAVA_HOME:   $JAVA_HOME"

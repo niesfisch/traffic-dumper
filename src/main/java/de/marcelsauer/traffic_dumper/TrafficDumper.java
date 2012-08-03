@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.marcelsauer.pgProtocolDebugger;
+package de.marcelsauer.traffic_dumper;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -27,45 +27,42 @@ import java.net.UnknownHostException;
 /**
  * @author msauer
  */
-public class PgDebugger {
+public class TrafficDumper {
 
-    private static final String SERVER = "server";
-    private static final String PORT = "serverport";
+    private static final String SERVER = "targetserver";
+    private static final String PORT = "targetport";
     private static final String LOCALPORT = "localport";
 
-    private final String serverName;
-    private final int serverPort;
+    private final String targetserver;
+    private final int targetport;
     private final int localPort;
 
-    private final PgMessageCallback callback;
-
-    public PgDebugger(String serverName, int serverPort, int localPort, PgMessageCallback callback) {
-        this.serverName = serverName;
-        this.serverPort = serverPort;
+    public TrafficDumper(String targetserver, int targetport, int localPort) {
+        this.targetserver = targetserver;
+        this.targetport = targetport;
         this.localPort = localPort;
-        this.callback = callback;
     }
 
     public static void main(String[] args) {
-        PgDebugger pgDebugger = createPgDebuggerBasedOn(args);
-        pgDebugger.start();
+        TrafficDumper trafficDumper = createTrafficDumperBasedOn(args);
+        trafficDumper.start();
     }
 
-    private static PgDebugger createPgDebuggerBasedOn(String[] args) {
+    private static TrafficDumper createTrafficDumperBasedOn(String[] args) {
         OptionParser parser = new OptionParser();
         OptionSpec<String> server = parser.accepts(SERVER).withRequiredArg().required().ofType(String.class);
-        OptionSpec<Integer> serverPort = parser.accepts(PORT).withRequiredArg().required().ofType(Integer.class);
+        OptionSpec<Integer> targetport = parser.accepts(PORT).withRequiredArg().required().ofType(Integer.class);
         OptionSpec<Integer> localPort = parser.accepts(LOCALPORT).withRequiredArg().required().ofType(Integer.class);
 
         OptionSet options = parser.parse(args);
 
-        return new PgDebugger(server.value(options), serverPort.value(options), localPort.value(options), new DumpingMessageCallback());
+        return new TrafficDumper(server.value(options), targetport.value(options), localPort.value(options));
     }
 
     public void start() {
         ServerSocket server = createLocalServerSocket();
 
-        System.out.println(String.format("waiting for incoming connections on port '%s' which will be forward to '%s:%s' ... ", this.localPort, this.serverName, this.serverPort));
+        System.out.println(String.format("waiting for incoming connections on port '%s' which will be forward to '%s:%s' ... ", this.localPort, this.targetserver, this.targetport));
 
         try {
             Socket incoming = server.accept();
@@ -84,13 +81,13 @@ public class PgDebugger {
     }
 
     private void proxy(Socket incoming) throws IOException {
-        Socket outgoing = new Socket(this.serverName, this.serverPort);
+        Socket outgoing = new Socket(this.targetserver, this.targetport);
         outgoing.setTcpNoDelay(true);
 
-        ProxyThread frontendToBackend = new ProxyThread("frontend->backend", incoming, outgoing, Sender.FRONTEND, callback);
+        ProxyThread frontendToBackend = new ProxyThread("client->server", incoming, outgoing, Sender.CLIENT);
         frontendToBackend.start();
 
-        ProxyThread backendToFrontend = new ProxyThread("backend->frontend", outgoing, incoming, Sender.BACKEND, callback);
+        ProxyThread backendToFrontend = new ProxyThread("server->client", outgoing, incoming, Sender.SERVER);
         backendToFrontend.start();
     }
 
@@ -102,13 +99,5 @@ public class PgDebugger {
             throw new RuntimeException(e);
         }
         return server;
-    }
-
-    private static class DumpingMessageCallback implements PgMessageCallback {
-
-        @Override
-        public void receivedMessage(PgMessage message) {
-            System.out.println(message);
-        }
     }
 }
