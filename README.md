@@ -64,11 +64,3 @@ Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
 # Release Notes
 
 .... TBD
-
-# Under the hood
-
-the program acts as a proxy. it reads all the bytes send through the wire and tries to collect the messages.
-
-the message parsing is based on the [Postgres Protocol V3.0](http://www.postgresql.org/docs/devel/static/protocol.html)
-
-after parsing a message it is printed and the bytes are forwarded to postgres.
